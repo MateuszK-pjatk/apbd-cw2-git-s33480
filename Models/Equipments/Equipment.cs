@@ -1,4 +1,4 @@
-﻿namespace Proj1.Models.Equipment;
+﻿namespace Proj1.Models.Equipments;
 
 public abstract class Equipment
 {
