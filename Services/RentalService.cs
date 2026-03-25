@@ -41,38 +41,37 @@ public class RentalService
         _rentals.Add(newRental);
     }
 
-    public void ReturnEquipment(Equipment equipment)
+    public void ReturnEquipment(Equipment equipment, DateTime? customReturnDate = null)
     {
         Rental activeRental = null;
-
+        
         foreach (var rental in _rentals)
         {
             if (rental.RentedItem.Id == equipment.Id && rental.ReturnDate == null)
             {
                 activeRental = rental;
-                break;
+                break; 
             }
         }
 
         if (activeRental == null)
         {
-            throw new Exception($"Sprzet {equipment.Name} nie jest obecnie wypozyczony");
+            throw new Exception($"Sprzet {equipment.Name} nie jest obecnie wypozyczony.");
         }
         
-        activeRental.ReturnDate = DateTime.Now;
+        activeRental.ReturnDate = customReturnDate ?? DateTime.Now;
 
         if (activeRental.ReturnDate > activeRental.DueDate)
         {
             TimeSpan delay = activeRental.ReturnDate.Value - activeRental.DueDate;
+            int daysLate = (int)Math.Ceiling(delay.TotalDays); 
             
-            int daysLate = (int)Math.Ceiling(delay.TotalDays);
-
             if (daysLate > 0)
             {
                 activeRental.PenaltyFee = daysLate * DailyPenaltyRate;
             }
         }
-        
+
         equipment.IsAvailable = true;
     }
 
